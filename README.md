@@ -2,16 +2,16 @@
 
 ## Tabla de contenidos
 
-- [01. Descripción](#01-descripción)
-- [02. Instalación](#02-instalación)
-- [03. Uso](#03-uso)
-- [04. Archivos eliminados](#04-archivos-eliminados)
-- [05. Autor](#05-autor)
-- [06. Licencia](#06-licencia)
+- [01 Descripción](#01-descripción)
+- [02 Instalación](#02-instalación)
+- [03 Uso](#03-uso)
+- [04 Archivos eliminados](#04-archivos-eliminados)
+- [05 Autor](#05-autor)
+- [06 Licencia](#06-licencia)
 
 ---
 
-## 01. Descripción
+## 01 Descripción
 
 **CleanTMP** es una herramienta de línea de comandos para eliminar archivos temporales o residuales en carpetas de usuario. Elimina elementos como `.DS_Store`, `Thumbs.db`, archivos swap de Vim, metadatos de macOS, entre otros.
 
@@ -32,7 +32,7 @@ Ideal para mantener limpias carpetas de documentos, música, descargas o para co
 
 ---
 
-## 02. Instalación
+## 02 Instalación
 
 ### Requisitos
 

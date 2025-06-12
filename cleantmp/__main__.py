@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-CleanTMP
+"""CleanTMP
 
 Aplicación que elimina archivos temporales o basura que aparecen en directorios
 de usuario (como carpetas con música, fotos, etc.), y que no son archivos de 
@@ -92,7 +91,7 @@ def is_temp_file(filename:str) -> bool:
         filename (str): Nombre del archivo a comprobar.
     
     Returns:
-        bool: True si es un archivo a elminar, False en caso contrario.
+        bool: True si es un archivo a eliminar, False en caso contrario.
     """
     if filename in TEMP_FILES:
         return True
@@ -120,7 +119,7 @@ def is_access(path:str) -> bool:
 
 
 def report(recursive:bool) -> str:
-    """Reporte con el resultado de la elimanción.
+    """Reporte con el resultado de la eliminación.
     
     Args:
         recursive (bool): Si la eliminación de archivos fue de forma recursiva.
