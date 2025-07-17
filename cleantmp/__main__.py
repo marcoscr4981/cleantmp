@@ -9,7 +9,7 @@ Como root se añade a /usr/local/bin con el nombre cleantmp y se añade permiso
 de ejecución (chmod +x /usr/local/bin/cleantmp)
 
 Autor: Marcos Cuadrado Rey
-Versión: v1.0
+Versión: v1.1
 Licencia: MIT
 """
 import argparse
@@ -19,6 +19,16 @@ import signal
 import sys
 from types import FrameType
 from typing import Optional
+
+
+colors = {
+    'examined': '\033[0;32m',
+    'eliminated': '\033[0;36m',
+    'error': '\033[0;31m',
+    'no_access': '\033[0;35m',
+    'ignored': '\033[0;35m',
+    'reset': '\033[0;37m',
+}
 
 
 stats = {
@@ -70,16 +80,23 @@ def def_handler(sig:int, frame:Optional[FrameType]) -> None:
         sig (int): Señal recibida (en este caso, SIGINT).
         frame (FrameType): Marco de pila en el momento de la interrupción.
     """
-    print("\n\n[!] Saliendo...\n")
+    print(f"\n\n{colors['error']}[!] Saliendo...{colors['reset']}\n")
     sys.exit(1)
 
 
 def config_argparse() -> argparse.Namespace:
-    """Configura el parser de argumentos que define las opciones disponibles para el usuario."""
+    """Configura el parser de argumentos que define las opciones disponibles para el usuario.
+    
+    Returns:
+        argparse.Namespace: Objeto con los argumentos de línea de comandos parseados:
+            - path (str): Ruta a la carpeta a limpiar (por defecto, la actual).
+            - recursive (bool): Si se deben eliminar archivos de forma recursiva.
+            - version (str): Muestra la versión y termina el programa.
+    """
     parser = argparse.ArgumentParser(description = 'CleanTMP - Elimina archivos temporales del sistema')
     parser.add_argument('-r', '--recursive', action='store_true', help='Elimina archivos temporales de forma recursiva en carpetas')
-    parser.add_argument('path', type=str, help='Ruta a la carpeta a limpiar')
-    parser.add_argument('-v', '--version', action='version', version=f'CleanTMP v1.0', help=f'Versión de CleanTMP')
+    parser.add_argument('path', nargs='?', default='.', type=str, help='Ruta a la carpeta a limpiar')
+    parser.add_argument('-v', '--version', action='version', version=f'CleanTMP v1.1', help=f'Versión de CleanTMP')
     
     return parser.parse_args()
 
@@ -130,19 +147,19 @@ def report(recursive:bool) -> str:
     lines = []
 
     if recursive:
-        lines.append(f"\nCarpetas examinadas       : {stats['examined_dirs']}")
+        lines.append(f"\n{colors['examined']}Carpetas examinadas:{colors['reset']} {stats['examined_dirs']}")
 
         if stats['ignored_dirs'] > 0:
-            lines.append(f"Carpetas ignoradas        : {stats['ignored_dirs']}")
+            lines.append(f"  {colors['ignored']}Carpetas ignoradas:{colors['reset']}  {stats['ignored_dirs']}")
 
         if stats['inaccessible_dirs'] > 0:
-            lines.append(f"Carpetas sin acceso       : {stats['inaccessible_dirs']}")
+            lines.append(f"  {colors['no_access']}Carpetas sin acceso:{colors['reset']} {stats['inaccessible_dirs']}\n")
 
-    lines.append(f"Archivos examinados       : {stats['examined_files']}")
-    lines.append(f"Archivos eliminados       : {stats['deleted_files']}")
+    lines.append(f"{colors['examined']}Archivos examinados:{colors['reset']} {stats['examined_files']}")
+    lines.append(f"  {colors['eliminated']}Archivos eliminados:{colors['reset']} {stats['deleted_files']}")
 
     if stats['inaccessible_files'] > 0:
-        lines.append(f"Archivos sin acceso       : {stats['inaccessible_files']}")
+        lines.append(f"  {colors['no_access']}Archivos sin acceso:{colors['reset']} {stats['inaccessible_files']}")
 
     return "\n".join(lines)
 
@@ -158,7 +175,7 @@ def clean_temp_files(path:str, recursive:bool = False) -> None:
         CleanTmpException: Si se ha producido un error en el escaneo o eliminación de archivos temporales.
     """
     if not os.path.exists(path) or not os.path.isdir(path):
-        raise CleanTmpException(f"La ruta proporcionada no existe o no es una carpeta: {path}")
+        raise CleanTmpException(f"No se ha podido obtener una ruta válida")
     
     stats['examined_dirs'] += 1
 
@@ -190,7 +207,7 @@ def clean_temp_files(path:str, recursive:bool = False) -> None:
         
         if is_temp_file(file):
             if not is_access(filepath):
-                print(f"[!] No se ha podido eliminar el archivo {filepath}")
+                print(f"{colors['error']}[!] No se ha podido eliminar el archivo:{colors['reset']} {filepath}")
                 stats['inaccessible_files'] += 1
                 continue
             
@@ -198,7 +215,7 @@ def clean_temp_files(path:str, recursive:bool = False) -> None:
                 os.remove(filepath)
                 stats['deleted_files'] += 1
             except Exception:
-                print(f"[!] No se ha podido eliminar el archivo {filepath}")
+                print(f"{colors['error']}[!] No se ha podido eliminar el archivo:{colors['reset']} {filepath}")
                 stats['inaccessible_files'] += 1
 
 
@@ -211,18 +228,14 @@ def main() -> None:
     """
     parser = config_argparse()
 
-    if parser.path is None or parser.path == "":
-        print("\n[!] No has proporcionado la carpeta a limpiar\n")
-        sys.exit(1)
-
     try:
         clean_temp_files(parser.path, parser.recursive)
 
         print(report(parser.recursive))
     except CleanTmpException as ex:
-        print(f"\n[!] {str(ex)}\n")
+        print(f"\n{colors['error']}[!] {str(ex)}{colors['reset']}\n")
     except Exception as ex:
-        print(f"\n[!] Se ha producido un error inesperado {str(ex)}\n")
+        print(f"\n{colors['error']}[!] Se ha producido un error inesperado:{colors['reset']} {str(ex)}\n")
 
 
 if __name__ == '__main__':

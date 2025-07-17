@@ -17,8 +17,8 @@
 
 Ideal para mantener limpias carpetas de documentos, música, descargas o para compartir directorios sin archivos innecesarios.
 
-- **Versión:** v1.0  
-- **Última revisión:** 11/06/2025  
+- **Versión:** v1.1
+- **Última revisión:** 17/07/2025  
 
 ### Características
 
@@ -27,6 +27,11 @@ Ideal para mantener limpias carpetas de documentos, música, descargas o para co
 - Ignora carpetas protegidas del sistema.
 - Genera un **reporte detallado** tras la ejecución.
 - Compatible con **Python 3.7+**.
+
+### Actualizaciones
+
+- Se añaden colores a los mensajes que se muestran por pantalla.
+- Ahora no es necesario especificar una ruta: si no se indica ninguna, el programa limpiará los archivos temporales en el directorio actual.
 
 [Subir](#tabla-de-contenidos)
 
